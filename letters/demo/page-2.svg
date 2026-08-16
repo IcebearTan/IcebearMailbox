@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1131" font-family="Kaiti SC, STKaiti, KaiTi, serif">
+  <!-- 示例信纸 · 第 2 页（替换成你的手写扫描件即可） -->
+  <defs>
+    <linearGradient id="paperGlow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".5"/>
+      <stop offset=".5" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="1" stop-color="#d8c9a8" stop-opacity=".25"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="800" height="1131" fill="#fdf8ec"/>
+  <rect width="800" height="1131" fill="url(#paperGlow)"/>
+
+  <g stroke="#d8c9a8" stroke-width="1.6" stroke-dasharray="1 7" stroke-linecap="round">
+    <line x1="72" y1="300" x2="728" y2="300"/>
+    <line x1="72" y1="364" x2="728" y2="364"/>
+    <line x1="72" y1="428" x2="728" y2="428"/>
+    <line x1="72" y1="492" x2="728" y2="492"/>
+    <line x1="72" y1="556" x2="728" y2="556"/>
+    <line x1="72" y1="620" x2="728" y2="620"/>
+    <line x1="72" y1="684" x2="728" y2="684"/>
+    <line x1="72" y1="748" x2="728" y2="748"/>
+    <line x1="72" y1="812" x2="728" y2="812"/>
+    <line x1="72" y1="876" x2="728" y2="876"/>
+    <line x1="72" y1="940" x2="728" y2="940"/>
+    <line x1="72" y1="1004" x2="728" y2="1004"/>
+    <line x1="72" y1="1068" x2="728" y2="1068"/>
+  </g>
+
+  <g font-size="30" fill="#6b4f3a" letter-spacing="2">
+    <text x="76" y="292">长信可以有很多页，</text>
+    <text x="76" y="356">每一页都会被好好展开。</text>
+    <text x="76" y="484">愿这些字，替我陪着你。</text>
+    <text x="76" y="612" font-size="24" fill="#a08760">（这是第二页示例信纸，换掉它吧）</text>
+  </g>
+
+  <!-- 涂鸦：一箭双心 -->
+  <g stroke="#c4655a" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M400 830 c -20 -20 -56 -13 -56 14 c 0 23 30 40 56 60 c 26 -20 56 -37 56 -60 c 0 -27 -36 -34 -56 -14 z"/>
+    <path d="M400 900 c -14 -14 -38 -9 -38 10 c 0 16 21 28 38 42 c 17 -14 38 -26 38 -42 c 0 -19 -24 -24 -38 -10 z"/>
+    <line x1="180" y1="880" x2="620" y2="880" stroke-dasharray="10 8" stroke-width="2"/>
+    <path d="M620 880 l -16 -8 v 16 z" fill="#c4655a" stroke="none"/>
+    <path d="M180 880 l 16 -8 v 16 z" fill="#c4655a" stroke="none"/>
+  </g>
+
+  <text x="728" y="1108" text-anchor="end" font-size="20" fill="#b0a184">— 第 2 页 · 共 2 页 —</text>
+</svg>
