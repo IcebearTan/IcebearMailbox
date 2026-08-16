@@ -105,6 +105,8 @@
 
   function postmarkSVG(date, theme) {
     const qixi = theme === 'qixi';
+    stampUid++;
+    const roughId = 'ink-rough-' + stampUid;
     const p = parseDate(date);
     const md = p ? p.m + '.' + p.d : String(date || '');
     const yy = p ? p.y : '';
@@ -118,7 +120,14 @@
       : '<path d="M84 27 q5 -4 10 0 t10 0 t10 0 t10 0" stroke-width="1.8"/>' +
         '<path d="M84 38 q5 -4 10 0 t10 0 t10 0 t10 0" stroke-width="1.8"/>' +
         '<path d="M84 49 q5 -4 10 0 t10 0 t10 0 t10 0" stroke-width="1.8"/>';
+    /* 湍流置换滤镜：油墨毛边，像真的手工盖章 */
+    const rough =
+      '<defs><filter id="' + roughId + '" x="-8%" y="-8%" width="116%" height="116%">' +
+      '<feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="1" result="n"/>' +
+      '<feDisplacementMap in="SourceGraphic" in2="n" scale="1.8"/></filter></defs>';
     return '<svg viewBox="0 0 132 74" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="none" stroke="currentColor">' +
+      rough +
+      '<g filter="url(#' + roughId + ')">' +
       '<circle cx="48" cy="37" r="31" stroke-width="2.4"/>' +
       '<circle cx="48" cy="37" r="26" stroke-width="1"/>' +
       '<line x1="24" y1="29" x2="72" y2="29" stroke-width="1"/>' +
@@ -126,38 +135,10 @@
       (topText ? '<text x="48" y="26" text-anchor="middle" font-size="' + (qixi ? 10 : 8.5) + '" fill="currentColor" stroke="none">' + esc(topText) + '</text>' : '') +
       '<text x="48" y="42.5" text-anchor="middle" font-size="13" fill="currentColor" stroke="none">' + esc(md) + '</text>' +
       side +
-      '</svg>';
+      '</g></svg>';
   }
 
-  /* ---------------- 七夕装饰：牛郎织女 / 鹊桥 / 喜鹊 ---------------- */
-
-  const QIXI_STAR =
-    '<path d="M60 4 C61 12 66 17 74 18 C66 19 61 24 60 32 C59 24 54 19 46 18 C54 17 59 12 60 4 Z" fill="#f3d98b"/>';
-
-  /* 左：织女，执金线 */
-  const FIGURE_ZHINVU =
-    '<svg viewBox="0 0 120 200" aria-hidden="true">' + QIXI_STAR +
-    '<path d="M66 46 q16 -14 24 -30" stroke="rgba(243,217,139,.65)" stroke-width="1" fill="none"/>' +
-    '<circle cx="90" cy="16" r="1.7" fill="#f3d98b"/>' +
-    '<g fill="#0e0a22" stroke="rgba(231,196,106,.4)" stroke-width="1">' +
-    '<circle cx="60" cy="50" r="9"/>' +
-    '<path d="M60 60 c-9 1 -14 8 -15 17 c-1 10 2 16 -1 26 c-3 12 -10 22 -12 38 c-1 10 1 20 4 30 l10 -2 c-2 -12 -1 -22 2 -32 l4 34 l12 0 l3 -36 c4 10 6 22 8 34 l10 2 c2 -12 2 -24 0 -36 c-2 -12 -5 -20 -5 -30 c0 -10 -3 -19 -9 -24 c-4 -3 -8 -4 -11 -3 z"/>' +
-    '</g></svg>';
-
-  /* 右：牛郎，扁担挑着两个小星星（孩子） */
-  const FIGURE_NIULANG =
-    '<svg viewBox="0 0 120 200" aria-hidden="true">' + QIXI_STAR +
-    '<path d="M22 84 L102 66" stroke="#c9a44f" stroke-width="2.5" stroke-linecap="round"/>' +
-    '<path d="M32 81 l0 10 M90 71 l0 9" stroke="rgba(231,196,106,.6)" stroke-width="1"/>' +
-    '<circle cx="32" cy="99" r="8" fill="#0e0a22" stroke="rgba(231,196,106,.4)"/>' +
-    '<circle cx="90" cy="87" r="8" fill="#0e0a22" stroke="rgba(231,196,106,.4)"/>' +
-    '<circle cx="32" cy="99" r="1.4" fill="#f3d98b"/><circle cx="90" cy="87" r="1.4" fill="#f3d98b"/>' +
-    '<g fill="#0e0a22" stroke="rgba(231,196,106,.4)" stroke-width="1">' +
-    '<circle cx="62" cy="58" r="8"/>' +
-    '<path d="M62 68 c-8 1 -13 7 -14 16 c-1 12 1 22 -2 36 c-2 14 -6 26 -8 44 l10 2 c3 -16 6 -28 8 -38 l3 36 l11 0 l2 -38 c3 12 5 24 7 38 l10 -2 c-2 -18 -5 -30 -6 -44 c-1 -14 1 -24 -3 -34 c-3 -8 -9 -13 -18 -16 z"/>' +
-    '</g>' +
-    '<path d="M64 72 q12 -4 24 -8" stroke="#0e0a22" stroke-width="5" stroke-linecap="round" fill="none"/>' +
-    '</svg>';
+  /* ---------------- 七夕装饰：鹊桥 + 喜鹊（牛郎织女由 canvas 星座渲染） ---------------- */
 
   /* 鹊桥：星点连成的弧 */
   const BRIDGE_SVG =
@@ -181,8 +162,6 @@
 
   const QIXI_DECO =
     BRIDGE_SVG +
-    '<div class="qixi-figure left">' + FIGURE_ZHINVU + '<span class="qixi-label">织女星</span></div>' +
-    '<div class="qixi-figure right">' + FIGURE_NIULANG + '<span class="qixi-label">牛郎星</span></div>' +
     '<div class="magpie-flock">' + MAGPIE_SVG + MAGPIE_SVG + MAGPIE_SVG + '</div>' +
     '<div class="magpie-flock f2">' + MAGPIE_SVG + MAGPIE_SVG + '</div>';
 
