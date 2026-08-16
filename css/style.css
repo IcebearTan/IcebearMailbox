@@ -131,8 +131,60 @@ body.no-scroll { overflow: hidden; }
 /* ---------------- 信封组件 ---------------- */
 
 .hero {
+  width: 100%;
   display: flex; flex-direction: column; align-items: center; gap: 14px;
   animation: riseIn .9s .3s cubic-bezier(.2, .7, .3, 1) both;
+}
+
+/* 主屏轮换舞台：两侧切换按钮（皮肤预览式） */
+.hero-stage {
+  width: 100%;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: clamp(6px, 2vw, 20px);
+}
+
+.hero-envelope { display: flex; justify-content: center; }
+
+/* 每次换信，主屏信封轻巧地换上场 */
+.hero-envelope .envelope { animation: envSwap .5s cubic-bezier(.2, .7, .3, 1) both; }
+@keyframes envSwap {
+  from { opacity: 0; transform: translateY(12px) scale(.985); }
+  to   { opacity: 1; transform: none; }
+}
+
+.hero-arrow {
+  flex: none;
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  border: 1px solid rgba(150, 105, 60, .45);
+  background: rgba(255, 248, 232, .6);
+  color: var(--ink-soft);
+  font-size: 19px; line-height: 1;
+  font-family: inherit;
+  cursor: pointer;
+  /* 抬高对齐信封画面中心（下方还有日期/标题文字） */
+  margin-bottom: clamp(24px, 6vh, 56px);
+  transition: transform .3s ease, background .3s ease, box-shadow .3s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.hero-arrow:hover:not(:disabled) {
+  transform: scale(1.1);
+  background: #fffaef;
+  box-shadow: 0 6px 18px rgba(120, 80, 35, .22);
+}
+.hero-arrow:active:not(:disabled) { transform: scale(.96); }
+.hero-arrow:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+.hero-arrow[hidden] { display: none; }
+
+/* 七夕夜里的两侧按钮 */
+body[data-theme="qixi"] .hero-arrow {
+  background: rgba(28, 18, 58, .55);
+  border-color: rgba(231, 196, 106, .4);
+  color: #e7c46a;
+}
+body[data-theme="qixi"] .hero-arrow:hover:not(:disabled) {
+  background: rgba(40, 26, 82, .8);
+  box-shadow: 0 6px 18px rgba(4, 2, 16, .5);
 }
 
 .hero-hint {
@@ -387,11 +439,13 @@ body.no-scroll { overflow: hidden; }
 .shelf-scroll {
   width: 100%;
   overflow-x: auto;
+  scroll-behavior: smooth;
   padding: 4px 10px 22px;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(120, 80, 40, .4) transparent;
+  scrollbar-width: none;   /* 隐藏滚动条，滚动由选中项驱动 */
 }
+.shelf-scroll::-webkit-scrollbar { display: none; }
 
+/* 皮肤预览栏：跟随选中信居中，切换时平滑滚动 */
 .shelf-tray {
   display: flex; align-items: flex-end; gap: 28px;
   width: max-content; min-width: min(100%, 100%);
@@ -405,6 +459,22 @@ body.no-scroll { overflow: hidden; }
     inset 0 2px 6px rgba(255, 235, 200, .28),
     inset 0 -8px 16px rgba(60, 35, 15, .5),
     0 12px 26px rgba(90, 60, 25, .28);
+}
+
+/* 选中的迷你信封：金环 + 金字 */
+.envelope.mini.active .env-back {
+  box-shadow:
+    0 0 0 3px rgba(217, 164, 65, .85),
+    0 16px 34px rgba(92, 62, 28, .35);
+}
+body[data-theme="qixi"] .envelope.mini.active .env-back {
+  box-shadow:
+    0 0 0 3px rgba(243, 217, 139, .9),
+    0 16px 34px rgba(8, 4, 26, .6);
+}
+.envelope.mini.active .env-title {
+  color: #f3d98b;
+  text-shadow: 0 0 10px rgba(243, 217, 139, .55);
 }
 
 /* 托盘里的迷你信封：文字落在深色木头上，用米白保证对比度 */
@@ -565,7 +635,9 @@ body.no-scroll { overflow: hidden; }
 /* ---------------- 响应式 ---------------- */
 
 @media (max-width: 640px) {
+  :root { --env-w-hero: min(50vw, 236px); }
   .page { padding-inline: 14px; }
+  .hero-arrow { width: 42px; height: 42px; font-size: 16px; margin-bottom: clamp(16px, 4vh, 32px); }
   .env-postmark { width: 52%; right: 6%; }
   .shelf-tray { gap: 22px; padding: 22px 22px 6px; }
   .envelope.mini { --w: 126px; }

@@ -290,47 +290,101 @@
     }
   })();
 
-  /* 信封列表 */
+  /* 信封列表 + 主屏轮换（皮肤预览式） */
+  let selectedIdx = 0;
+
+  function renderHero() {
+    const wrap = $('#heroEnvelope');
+    if (wrap) wrap.innerHTML = envelopeHTML(letters[selectedIdx], selectedIdx, false);
+  }
+
+  function updateShelfActive() {
+    shelfTray.querySelectorAll('.envelope.mini').forEach(function (b) {
+      const on = +b.dataset.idx === selectedIdx;
+      b.classList.toggle('active', on);
+      if (on) b.setAttribute('aria-current', 'true');
+      else b.removeAttribute('aria-current');
+    });
+  }
+
+  /* 皮肤预览栏跟随：把选中的小信封平滑滚到正中 */
+  function centerSelected() {
+    const scrollEl = document.querySelector('.shelf-scroll');
+    if (!scrollEl) return;
+    const el = shelfTray.querySelector('.envelope.mini[data-idx="' + selectedIdx + '"]');
+    if (!el) return;
+    const sr = scrollEl.getBoundingClientRect();
+    const er = el.getBoundingClientRect();
+    const target = scrollEl.scrollLeft + (er.left - sr.left) + er.width / 2 - scrollEl.clientWidth / 2;
+    scrollEl.scrollTo({ left: Math.max(0, target), behavior: 'smooth' });
+  }
+
+  /* 换信 = 换主屏信封 + 换整站皮肤 + 预览栏跟随 */
+  function selectLetter(idx) {
+    const n = letters.length;
+    if (!n) return;
+    selectedIdx = ((idx % n) + n) % n;
+    renderHero();
+    setTheme(letters[selectedIdx].theme);
+    updateShelfActive();
+    centerSelected();
+  }
+
   if (!letters.length) {
     heroSlot.innerHTML = '<div class="empty-card">信箱还空着，等第一封信来 ✉</div>';
   } else {
     heroSlot.innerHTML =
-      envelopeHTML(letters[0], 0, false) +
+      '<div class="hero-stage">' +
+      '<button class="hero-arrow" id="heroPrev" aria-label="上一封信">❮</button>' +
+      '<div class="hero-envelope" id="heroEnvelope"></div>' +
+      '<button class="hero-arrow" id="heroNext" aria-label="下一封信">❯</button>' +
+      '</div>' +
       '<p class="hero-hint">点按火漆 · 拆开这封信 ✧</p>';
+    renderHero();
 
+    /* 两侧切换箭头（信多才有意义） */
+    const heroPrev = document.getElementById('heroPrev');
+    const heroNext = document.getElementById('heroNext');
     if (letters.length > 1) {
-      shelfTray.innerHTML = letters
-        .slice(1)
-        .map(function (L, i) { return envelopeHTML(L, i + 1, true); })
-        .join('');
-      shelfSection.hidden = false;
+      heroPrev.addEventListener('click', function () { selectLetter(selectedIdx - 1); });
+      heroNext.addEventListener('click', function () { selectLetter(selectedIdx + 1); });
+    } else {
+      heroPrev.hidden = true;
+      heroNext.hidden = true;
+    }
 
-      /* 第一屏提示：托盘看不见时引导下滑，看见了就淡出 */
-      heroSlot.insertAdjacentHTML('beforeend',
-        '<button class="scroll-hint" id="scrollHint" aria-label="滑到信箱托盘看更多信">' +
-        '<span>往下翻 · 信箱里还有 ' + (letters.length - 1) + ' 封信</span>' +
-        '<span class="chev" aria-hidden="true">▾</span>' +
-        '</button>');
-      var scrollHint = document.getElementById('scrollHint');
-      scrollHint.addEventListener('click', function () {
-        shelfSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      });
-      if ('IntersectionObserver' in window) {
-        new IntersectionObserver(function (entries) {
-          entries.forEach(function (en) {
-            scrollHint.classList.toggle('gone', en.isIntersecting);
-          });
-        }, { threshold: 0.15 }).observe(shelfSection);
-      }
+    /* 信箱托盘 = 皮肤预览栏：全部信入列，跟随选中项滚动居中 */
+    shelfSection.hidden = false;
+    shelfTray.innerHTML = letters
+      .map(function (L, i) { return envelopeHTML(L, i, true); })
+      .join('');
+    updateShelfActive();
+    requestAnimationFrame(centerSelected);
+
+    /* 第一屏提示：托盘看不见时引导下滑，看见了就淡出 */
+    heroSlot.insertAdjacentHTML('beforeend',
+      '<button class="scroll-hint" id="scrollHint" aria-label="滑到信箱托盘看全部信">' +
+      '<span>往下翻 · 信箱里有 ' + letters.length + ' 封信</span>' +
+      '<span class="chev" aria-hidden="true">▾</span>' +
+      '</button>');
+    var scrollHint = document.getElementById('scrollHint');
+    scrollHint.addEventListener('click', function () {
+      shelfSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          scrollHint.classList.toggle('gone', en.isIntersecting);
+        });
+      }, { threshold: 0.15 }).observe(shelfSection);
     }
   }
 
   /* 七夕装饰常驻 DOM，只在 data-theme=qixi 时浮现 */
   if (qixiDeco) qixiDeco.innerHTML = QIXI_DECO;
 
-  /* 初始主题 = 最新一封信（hero）的主题 */
-  const HERO_THEME = (letters[0] && letters[0].theme) || 'classic';
-  setTheme(HERO_THEME);
+  /* 初始主题 = 当前选中（第一封）的主题 */
+  setTheme(letters[0] && letters[0].theme);
 
   /* ---------------- 拆信与读信 ---------------- */
 
@@ -351,6 +405,12 @@
     readingTitle.textContent = L.title || '无题';
     readingDate.textContent = fmtDate(L.date);
     setTheme(L.theme);   /* 读哪封信，整站就换哪套皮肤 */
+
+    /* 同步主屏选中态（在浮层后面悄悄换好） */
+    selectedIdx = idx;
+    renderHero();
+    updateShelfActive();
+    currentEnv = null;   /* 旧信封 DOM 已被重渲染，无需再演合上动画 */
 
     if (L.pages && L.pages.length) {
       readingPages.innerHTML = L.pages.map(function (p, i) {
@@ -388,26 +448,33 @@
     document.body.classList.remove('no-scroll');
     setTimeout(function () { layer.hidden = true; }, 360);
     if (lastFocus && lastFocus.focus) lastFocus.focus();
-    setTheme(HERO_THEME);   /* 合上信，换回首页皮肤 */
-    if (currentEnv) { currentEnv.close(); currentEnv = null; }
+    /* 合上信：保持当前选中这封的皮肤 */
+    setTheme(letters[selectedIdx] && letters[selectedIdx].theme);
+    if (currentEnv && currentEnv.el.isConnected) currentEnv.close();
+    currentEnv = null;
   }
 
-  /* 信封点击（hero 与托盘共用委托） */
+  /* 信封点击：主屏信封=拆信；托盘小信封=皮肤预览选信 */
   heroSlot.addEventListener('click', function (e) {
     const btn = e.target.closest('.envelope');
     if (btn) openLetter(+btn.dataset.idx, btn);
   });
   shelfTray.addEventListener('click', function (e) {
-    const btn = e.target.closest('.envelope');
-    if (btn) openLetter(+btn.dataset.idx, btn);
+    const btn = e.target.closest('.envelope.mini');
+    if (btn) selectLetter(+btn.dataset.idx);
   });
 
   readingClose.addEventListener('click', hideReading);
   backdrop.addEventListener('click', hideReading);
 
   document.addEventListener('keydown', function (e) {
-    if (layer.hidden) return;
-    if (e.key === 'Escape') hideReading();
+    if (!layer.hidden) {
+      if (e.key === 'Escape') hideReading();
+      return;
+    }
+    /* 左右方向键也能换信（循环） */
+    if (e.key === 'ArrowLeft') selectLetter(selectedIdx - 1);
+    else if (e.key === 'ArrowRight') selectLetter(selectedIdx + 1);
   });
 
   /* 浮层内直接翻信（不重演拆信动画） */
