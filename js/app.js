@@ -13,6 +13,12 @@
   const letters = Array.isArray(CFG.letters) ? CFG.letters : [];
   let stampUid = 0;
 
+  /* 信纸图片带时间戳：站长改/换 SVG、JPG 后刷新立即生效，不被缓存坑 */
+  const ASSET_T = String(+new Date());
+  function fresh(path) {
+    return path + (path.indexOf('?') >= 0 ? '&' : '?') + '_t=' + ASSET_T;
+  }
+
   /* ---------------- 小工具 ---------------- */
 
   function esc(s) {
@@ -157,11 +163,11 @@
     const theme = letter.theme === 'qixi' ? 'qixi' : 'classic';
     const sealIcon = theme === 'qixi' ? STAR_SVG : HEART_SVG;
     const first = (letter.pages && letter.pages[0]) || '';
-    return '<button class="envelope' + (mini ? ' mini' : '') + '" data-idx="' + idx + '"' +
+    return '<button class="envelope' + (mini ? ' mini' : '') + '" data-idx="' + idx + '" data-skin="' + theme + '"' +
       ' aria-label="拆开 ' + esc(fmtDate(letter.date)) + ' 的信：' + esc(letter.title || '无题') + '">' +
       '<span class="env-float"><span class="env-scene">' +
       '<span class="env-back"></span>' +
-      '<span class="env-letter">' + (first ? '<img src="' + esc(first) + '" alt="" loading="lazy">' : '') + '</span>' +
+      '<span class="env-letter">' + (first ? '<img src="' + esc(fresh(first)) + '" alt="" loading="lazy">' : '') + '</span>' +
       '<span class="env-pocket"></span>' +
       '<span class="env-flap"></span>' +
       '<span class="env-stamp">' + stampSVG(idx, theme) + '</span>' +
@@ -195,6 +201,12 @@
   const bgA = $('#bgA');
   const bgB = $('#bgB');
   const qixiDeco = $('#qixiDeco');
+  const loveBox = $('#loveBox');
+  const calLayer = $('#calendarLayer');
+  const calBackdrop = $('#calendarBackdrop');
+  const calTitle = $('#calTitle');
+  const calSub = $('#calSub');
+  const calGrid = $('#calGrid');
 
   /* ---------------- 主题引擎（换肤）：双层背景交叉淡入 ---------------- */
 
@@ -234,26 +246,151 @@
   $('#siteSub').textContent = CFG.subtitle || '';
   $('#siteFoot').textContent = CFG.footerText || '❋ 纸短情长 ❋';
 
-  /* 恋爱计时 */
-  (function renderCounter() {
-    const el = $('#loveCounter');
-    let days = null;
+  /* ---------------- 恋爱计时：右上角小方框 ---------------- */
+
+  let loveStart = null;
+  let loveDays = null;
+
+  (function initLoveBox() {
     if (CFG.startDate) {
       const p = parseDate(CFG.startDate);
       if (p) {
-        const start = new Date(+p.y, +p.m - 1, +p.d);
+        loveStart = new Date(+p.y, +p.m - 1, +p.d);
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-        days = Math.floor((today - start) / 86400000) + 1;
-        if (days < 1) days = 1;
+        loveDays = Math.floor((today - loveStart) / 86400000) + 1;
+        if (loveDays < 1) loveDays = 1;
       }
     }
-    if (days == null) {
-      el.textContent = '（记得在 data/letters.js 里设置 startDate 哦 🙂）';
+    if (!loveBox) return;
+    loveBox.hidden = false;
+    if (loveStart) {
+      $('#loveDays').textContent = loveDays;
+      $('#loveSince').textContent = 'since ' + fmtDate(CFG.startDate);
     } else {
-      el.textContent = '今天是我们在一起的第 ' + days + ' 天 ♡';
+      loveBox.querySelector('.love-num').textContent = '设置 startDate';
+      $('#loveSince').textContent = 'data/letters.js';
     }
   })();
+
+  /* ---------------- 恋爱日历 ----------------
+     标注：每月恋爱纪念日 ❤ / 周年大 ❤ / 固定节日 ✦ / 自定义日子 ✿ */
+
+  const FESTIVALS_FIXED = [
+    { md: '01-01', name: '元旦' },
+    { md: '02-14', name: '情人节' },
+    { md: '03-14', name: '白色情人节' },
+    { md: '05-20', name: '520' },
+    { md: '12-25', name: '圣诞节' }
+  ];
+  /* 农历节日逐年不同，按年登记（2026 七夕 = 8月19日） */
+  const FESTIVALS_ONCE = { '2026-08-19': '七夕' };
+
+  let calY = 0, calM = 0;
+
+  function customDates() {
+    const lc = CFG.loveCalendar || {};
+    return Array.isArray(lc.customDates) ? lc.customDates : [];
+  }
+
+  /* 某天有什么标记 */
+  function dayInfo(y, m, d) {
+    const info = {};
+    const iso = y + '-' + pad(m + 1) + '-' + pad(d);
+    const md = pad(m + 1) + '-' + pad(d);
+
+    if (FESTIVALS_ONCE[iso]) {
+      info.fest = FESTIVALS_ONCE[iso];
+    } else {
+      for (let i = 0; i < FESTIVALS_FIXED.length; i++) {
+        if (FESTIVALS_FIXED[i].md === md) { info.fest = FESTIVALS_FIXED[i].name; break; }
+      }
+    }
+    customDates().forEach(function (c) {
+      if (c.date === iso && c.name) info.custom = c.name;
+    });
+
+    if (loveStart) {
+      if (d === loveStart.getDate()) {
+        const months = (y - loveStart.getFullYear()) * 12 + (m - loveStart.getMonth());
+        if (months > 0) info.anniv = '在一起满 ' + months + ' 个月';
+      }
+      if (m === loveStart.getMonth() && d === loveStart.getDate() &&
+          y > loveStart.getFullYear()) {
+        info.annivBig = '恋爱 ' + (y - loveStart.getFullYear()) + ' 周年 ❤';
+      }
+    }
+    return info;
+  }
+
+  function renderCalendar() {
+    calTitle.textContent = calY + ' 年 ' + (calM + 1) + ' 月';
+    calSub.textContent = loveStart
+      ? '自 ' + fmtDate(CFG.startDate) + ' 起 · 今天是第 ' + loveDays + ' 天 ❤'
+      : '（在 data/letters.js 里设置 startDate 后，这里会标出每个月的纪念日）';
+
+    const offset = (new Date(calY, calM, 1).getDay() + 6) % 7;   /* 周一开头 */
+    const daysInMonth = new Date(calY, calM + 1, 0).getDate();
+    const today = new Date();
+
+    let html = '';
+    for (let i = 0; i < offset; i++) html += '<span class="cal-day dim"></span>';
+    for (let d = 1; d <= daysInMonth; d++) {
+      const info = dayInfo(calY, calM, d);
+      const cls = ['cal-day'];
+      let tip = '';
+      if (today.getFullYear() === calY && today.getMonth() === calM && today.getDate() === d) {
+        cls.push('today');
+      }
+      if (info.annivBig) { cls.push('anniv-big'); tip = info.annivBig; }
+      else if (info.anniv) { cls.push('anniv'); tip = info.anniv; }
+      if (info.fest) { cls.push('fest'); tip = (tip ? tip + ' · ' : '') + info.fest; }
+      if (info.custom) { cls.push('custom'); tip = (tip ? tip + ' · ' : '') + info.custom; }
+      html += '<span class="cal-day ' + cls.join(' ') + '"' +
+        (tip ? ' title="' + esc(tip) + '"' : '') + '>' + d + '</span>';
+    }
+    calGrid.innerHTML = html;
+  }
+
+  function openCalendar() {
+    const now = new Date();
+    calY = now.getFullYear();
+    calM = now.getMonth();
+    renderCalendar();
+    calLayer.hidden = false;
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () { calLayer.classList.add('show'); });
+    });
+    document.body.classList.add('no-scroll');
+    const btn = document.getElementById('calendarClose');
+    if (btn) btn.focus();
+  }
+
+  function closeCalendar() {
+    if (calLayer.hidden) return;
+    calLayer.classList.remove('show');
+    document.body.classList.remove('no-scroll');
+    setTimeout(function () { calLayer.hidden = true; }, 360);
+    if (loveBox) loveBox.focus();
+  }
+
+  function shiftMonth(delta) {
+    calM += delta;
+    if (calM < 0) { calM = 11; calY--; }
+    else if (calM > 11) { calM = 0; calY++; }
+    renderCalendar();
+  }
+
+  if (loveBox) loveBox.addEventListener('click', openCalendar);
+  document.getElementById('calPrev').addEventListener('click', function () { shiftMonth(-1); });
+  document.getElementById('calNext').addEventListener('click', function () { shiftMonth(1); });
+  document.getElementById('calToday').addEventListener('click', function () {
+    const now = new Date();
+    calY = now.getFullYear(); calM = now.getMonth();
+    renderCalendar();
+  });
+  document.getElementById('calendarClose').addEventListener('click', closeCalendar);
+  if (calBackdrop) calBackdrop.addEventListener('click', closeCalendar);
 
   /* 信封列表 + 主屏轮换（皮肤预览式） */
   let selectedIdx = 0;
@@ -379,7 +516,7 @@
 
     if (L.pages && L.pages.length) {
       readingPages.innerHTML = L.pages.map(function (p, i) {
-        return '<figure class="page-wrap"><img src="' + esc(p) + '" alt="' +
+        return '<figure class="page-wrap"><img src="' + esc(fresh(p)) + '" alt="' +
           esc(fmtDate(L.date)) + ' 的手写信 · 第 ' + (i + 1) + ' 页"></figure>';
       }).join('');
     } else {
@@ -433,10 +570,12 @@
   backdrop.addEventListener('click', hideReading);
 
   document.addEventListener('keydown', function (e) {
-    if (!layer.hidden) {
-      if (e.key === 'Escape') hideReading();
+    if (e.key === 'Escape') {
+      if (!calLayer.hidden) closeCalendar();
+      else if (!layer.hidden) hideReading();
       return;
     }
+    if (!layer.hidden || !calLayer.hidden) return;
     /* 左右方向键也能换信（循环） */
     if (e.key === 'ArrowLeft') selectLetter(selectedIdx - 1);
     else if (e.key === 'ArrowRight') selectLetter(selectedIdx + 1);

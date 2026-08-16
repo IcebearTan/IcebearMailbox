@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1131" font-family="Kaiti SC, STKaiti, KaiTi, serif">
+  <!-- 引导信 · 第 1 页（占位信纸，明天替换成手写扫描件） -->
+  <defs>
+    <linearGradient id="paperGlow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".5"/>
+      <stop offset=".5" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="1" stop-color="#d8c9a8" stop-opacity=".25"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="800" height="1131" fill="#fdf8ec"/>
+  <rect width="800" height="1131" fill="url(#paperGlow)"/>
+
+  <g stroke="#d8c9a8" stroke-width="1.6" stroke-dasharray="1 7" stroke-linecap="round">
+    <line x1="72" y1="300" x2="728" y2="300"/>
+    <line x1="72" y1="364" x2="728" y2="364"/>
+    <line x1="72" y1="428" x2="728" y2="428"/>
+    <line x1="72" y1="492" x2="728" y2="492"/>
+    <line x1="72" y1="556" x2="728" y2="556"/>
+    <line x1="72" y1="620" x2="728" y2="620"/>
+    <line x1="72" y1="684" x2="728" y2="684"/>
+    <line x1="72" y1="748" x2="728" y2="748"/>
+    <line x1="72" y1="812" x2="728" y2="812"/>
+    <line x1="72" y1="876" x2="728" y2="876"/>
+    <line x1="72" y1="940" x2="728" y2="940"/>
+    <line x1="72" y1="1004" x2="728" y2="1004"/>
+    <line x1="72" y1="1068" x2="728" y2="1068"/>
+  </g>
+
+  <text x="728" y="122" text-anchor="end" font-size="24" fill="#8a6f52" letter-spacing="3">二〇二六年 八月十六</text>
+
+  <g font-size="30" fill="#6b4f3a" letter-spacing="2">
+    <text x="76" y="292">亲爱的琳：</text>
+    <text x="76" y="356">欢迎来到我们的小小信箱。</text>
+    <text x="76" y="420">这里以后会住着我写给你的信，</text>
+    <text x="76" y="484">想我的时候，就过来看看——</text>
+    <text x="76" y="548">点一点信封上火红的火漆，</text>
+    <text x="76" y="612">信，就会为你慢慢打开。</text>
+    <text x="76" y="676">每一封我都认真手写、认真封好，</text>
+    <text x="76" y="740">像把想说的话，留在你伸手可及的地方。</text>
+  </g>
+
+  <!-- 小涂鸦：白熊抱信（Ice Bear） -->
+  <g stroke="#cfc8ba" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="128" cy="851" r="13" fill="#ffffff" stroke-width="3"/>
+    <circle cx="212" cy="851" r="13" fill="#ffffff" stroke-width="3"/>
+    <rect x="108" y="856" width="124" height="88" rx="32" fill="#ffffff" stroke-width="3"/>
+    <ellipse cx="140" cy="892" rx="4.5" ry="6" fill="#3a332c" stroke="none"/>
+    <ellipse cx="200" cy="892" rx="4.5" ry="6" fill="#3a332c" stroke="none"/>
+    <ellipse cx="170" cy="911" rx="18" ry="12" fill="#f4f0e6" stroke="#d8d2c4" stroke-width="2"/>
+    <ellipse cx="170" cy="905" rx="5" ry="3.5" fill="#3a332c" stroke="none"/>
+    <path d="M170 908 v5 M170 913 q-4 4 -8 2 M170 913 q4 4 8 2" fill="none" stroke="#3a332c" stroke-width="2"/>
+    <rect x="116" y="940" width="108" height="92" rx="38" fill="#ffffff" stroke-width="3"/>
+    <g transform="rotate(-5 170 980)">
+      <rect x="138" y="956" width="64" height="46" rx="5" fill="#fdf6e9" stroke="#c9a874" stroke-width="2.5"/>
+      <path d="M138 961 L170 986 L202 961" fill="none" stroke="#c9a874" stroke-width="2"/>
+      <circle cx="170" cy="986" r="8" fill="#a8352a" stroke="none"/>
+      <path d="M167.5 986 c-2-2-4.5-1-4.5 1.5 c0 2 2.5 3 4.5 5 c2-2 4.5-3 4.5-5 c0-2.5-2.5-3-4.5-1.5 z" fill="none" stroke="#f3d9c8" stroke-width="1.5"/>
+    </g>
+    <circle cx="140" cy="984" r="9" fill="#ffffff" stroke-width="2.5"/>
+    <circle cx="200" cy="984" r="9" fill="#ffffff" stroke-width="2.5"/>
+    <ellipse cx="140" cy="1030" rx="12" ry="8" fill="#ffffff" stroke-width="2.5"/>
+    <ellipse cx="200" cy="1030" rx="12" ry="8" fill="#ffffff" stroke-width="2.5"/>
+  </g>
+
+  <text x="728" y="1108" text-anchor="end" font-size="20" fill="#b0a184">— 第 1 页 · 共 2 页 —</text>
+</svg>
