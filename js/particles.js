@@ -90,12 +90,12 @@
   /* ---------------- 贴图集 ---------------- */
 
   const WARM_GLOWS = ['255,224,150', '255,243,214', '255,201,139'].map(makeGlow);
-  const NEBULAS = [makeGlow('150,120,255'), makeGlow('170,120,220'), makeGlow('255,220,170')];
+  const NEBULAS = [makeGlow('130,140,255'), makeGlow('150,130,250'), makeGlow('255,220,170')];
 
   const STAR_SMALL = [
     makeStar('255,255,255', '235,240,255', false),
     makeStar('255,244,214', '255,233,168', false),
-    makeStar('235,225,255', '203,180,255', false),
+    makeStar('240,240,255', '185,192,255', false),
     makeStar('255,255,255', '255,255,255', false)
   ];
   const STAR_VEGA = makeStar('225,235,255', '190,210,255', true);    // 织女星：蓝白
@@ -145,7 +145,7 @@
     const P2 = { x: W * 0.98, y: H * 0.16 };
     const dx = P2.x - P1.x, dy = P2.y - P1.y;
     const ang = Math.atan2(dy, dx);
-    const bandW = Math.min(W, H) * 0.17;
+    const bandW = Math.min(W, H) * 0.20;
     const bandPoint = function (t, off) {
       return { x: P1.x + dx * t - dy / Math.hypot(dx, dy) * off, y: P1.y + dy * t + dx / Math.hypot(dx, dy) * off };
     };
@@ -162,24 +162,32 @@
     g.globalCompositeOperation = 'lighter';
 
     /* 银河星云亮斑 */
-    for (let i = 0; i < 6; i++) {
-      const p = bandPoint(rand(0.12, 0.88), gauss() * bandW * 0.4);
-      const size = rand(Math.min(W, H) * 0.16, Math.min(W, H) * 0.3);
-      g.globalAlpha = rand(0.05, 0.1);
+    for (let i = 0; i < 8; i++) {
+      const p = bandPoint(rand(0.1, 0.9), gauss() * bandW * 0.4);
+      const size = rand(Math.min(W, H) * 0.16, Math.min(W, H) * 0.32);
+      g.globalAlpha = rand(0.09, 0.17);
       g.drawImage(pick(NEBULAS), p.x - size / 2, p.y - size / 2, size, size);
     }
 
     /* 密集星带（越靠中线越密越亮） */
-    const N = Math.max(250, Math.min(900, Math.round(W * H / 1600)));
+    const N = Math.max(300, Math.min(1100, Math.round(W * H / 1150)));
     for (let i = 0; i < N; i++) {
       const t = rand(-0.04, 1.04);
       const off = gauss() * bandW;
       const p = bandPoint(t, off);
-      const falloff = Math.pow(Math.max(0, 1 - Math.abs(off) / bandW), 1.6);
-      g.globalAlpha = rand(0.12, 0.8) * falloff;
-      const r = Math.random() < 0.05 ? rand(1.2, 2) : rand(0.4, 1.1);
-      g.fillStyle = pick(['#ffffff', '#fff6e8', '#e8ecff', '#f0e4ff', '#ffffff']);
+      const falloff = Math.pow(Math.max(0, 1 - Math.abs(off) / bandW), 1.4);
+      g.globalAlpha = rand(0.2, 0.95) * falloff;
+      const r = Math.random() < 0.05 ? rand(1.2, 2.1) : rand(0.4, 1.2);
+      g.fillStyle = pick(['#ffffff', '#fff6e8', '#dce4ff', '#e8ecff', '#f0e4ff', '#ffffff']);
       g.fillRect(p.x - r / 2, p.y - r / 2, r, r);
+    }
+
+    /* 带内亮星：用真正的星体贴图点出骨架，银河因此「立」起来 */
+    for (let i = 0; i < 14; i++) {
+      const p = bandPoint(rand(0.05, 0.95), gauss() * bandW * 0.5);
+      const halo = rand(8, 16);
+      g.globalAlpha = rand(0.5, 0.9);
+      g.drawImage(pick(STAR_SMALL), p.x - halo, p.y - halo, halo * 2, halo * 2);
     }
 
     /* 星团亮结 */
@@ -215,7 +223,7 @@
       const t = rand(-0.02, 1.02);
       const off = gauss() * bandW * 0.8;
       const p = bandPoint(t, off);
-      g.globalAlpha = rand(0.05, 0.25);
+      g.globalAlpha = rand(0.08, 0.35);
       g.fillRect(p.x, p.y, 0.7, 0.7);
     }
 
@@ -224,28 +232,42 @@
     galaxyCanvas = c;
   }
 
-  /* ---------------- 星座（真实星表近似坐标） ---------------- */
+  /* ---------------- 星座（真实星表坐标换算） ----------------
+     天球实视投影：北在上、东在左（面南夜空/标准星图惯例）
+     屏幕坐标 x = −ΔRA·cos δ，y = −ΔDec
+     坐标源：J2000 星表（α Lyr 18h36.9m/+38°47′ 等），误差 < 0.1°，装饰级足够 */
 
-  /* 天琴座：织女星 Vega 0 / ε 1 / ζ 2 / δ 3 / β 4 / γ 5，竖琴四边形+上三角 */
+  /* 天琴座：织女星 Vega 0（右上顶点）/ ε 1 / ζ 2 / δ 3 / β 4 / γ 5，
+     竖琴四边形 ζ-δ-γ-β + 顶部小三角 Vega-ζ-ε */
   const LYRA = {
-    offs: [[-2.8, -2.3], [-0.9, -3.2], [-0.8, -1.1], [1.6, -0.4], [0.5, 3.1], [2.7, 3.8]],
+    offs: [[0, 0], [-1.48, -0.89], [-1.58, 1.18], [-3.53, 1.81], [-2.64, 5.42], [-4.43, 6.09]],
     mags: [0.03, 4.7, 4.3, 4.2, 3.5, 3.25],
     lines: [[0, 2], [0, 1], [2, 3], [3, 5], [5, 4], [4, 2]],
-    main: 0, label: '织女星', mainSprite: STAR_VEGA,
+    main: 0, label: '织女星', subLabel: '天琴座 α · Vega',
+    mainSprite: STAR_VEGA,
     phase: 0
   };
 
-  /* 天鹰座：牛郎星 Altair 0，河鼓三 γ 1 / 河鼓一 β 2 左右相随（扁担两头），
-     δ 3 / θ 4 展翅，λ 5 是尾羽 */
+  /* 天鹰座：牛郎星 Altair 0，河鼓三 γ 1（西北上）/ 河鼓一 β 2（东南下）扁担两头，
+     δ 3（西南翼，河鼓三下方）、ζ 6（西翼梢）、λ 5（尾，西南远端）、θ 4（东南翼） */
   const AQUILA = {
-    offs: [[0, 0], [-1.13, -1.75], [1.13, 2.57], [-6.45, 5.69], [5.13, 9.69], [-11.1, 13.75]],
-    mags: [0.76, 2.72, 3.71, 3.36, 3.24, 3.43],
-    lines: [[0, 1], [0, 2], [0, 3], [0, 4], [3, 5], [4, 5]],
-    main: 0, label: '牛郎星', mainSprite: STAR_ALTAIR,
+    offs: [
+      [0, 0],            /* α Altair  19h50.8m +08°52′ */
+      [1.13, -1.75],     /* γ Tarazed 19h46.3m +10°37′ */
+      [-1.13, 2.57],     /* β Alshain 19h55.3m +06°18′ */
+      [6.33, 5.69],      /* δ         19h25.4m +03°11′ */
+      [-4.37, 9.69],     /* θ         20h11.3m −00°49′ */
+      [11.12, 13.75],    /* λ         19h06.3m −04°53′ */
+      [11.30, -4.99]     /* ζ         19h05.4m +13°52′ */
+    ],
+    mags: [0.76, 2.72, 3.71, 3.36, 3.24, 3.43, 2.99],
+    lines: [[0, 1], [0, 2], [0, 3], [3, 5], [3, 6], [3, 4], [4, 2]],
+    main: 0, label: '牛郎星', subLabel: '天鹰座 α · Altair',
+    mainSprite: STAR_ALTAIR,
     phase: 2.1
   };
 
-  function magHalo(m) { return m < 1 ? 26 : (m < 3.5 ? 13 : (m < 4.1 ? 9.5 : 7)); }
+  function magHalo(m) { return m < 1 ? 26 : (m < 3.1 ? 13 : (m < 3.8 ? 9.5 : 7)); }
 
   function drawConstellation(cst, cx, cy, size, rot, t, alpha) {
     let minx = 1e9, maxx = -1e9, miny = 1e9, maxy = -1e9;
@@ -267,7 +289,7 @@
     /* 连线：细弱虚线，像描在星图上 */
     ctx.save();
     ctx.globalCompositeOperation = 'source-over';
-    ctx.strokeStyle = 'rgba(205,195,255,' + (0.20 * alpha).toFixed(3) + ')';
+    ctx.strokeStyle = 'rgba(205,198,255,' + (0.20 * alpha).toFixed(3) + ')';
     ctx.lineWidth = 1;
     ctx.setLineDash([3, 5]);
     cst.lines.forEach(function (ln) {
@@ -278,7 +300,7 @@
     });
     ctx.restore();
 
-    /* 恒星：加性混合，主星带星芒 */
+    /* 恒星：加性混合，主星带星芒呼吸 */
     ctx.save();
     ctx.globalCompositeOperation = 'lighter';
     ctx.globalAlpha = alpha;
@@ -292,18 +314,59 @@
     });
     ctx.restore();
 
-    /* 主星签名 */
+    /* 主星签名：金色主名 + 淡蓝星座小注 */
     const lp = pts[cst.main];
     ctx.save();
     ctx.globalCompositeOperation = 'source-over';
     ctx.globalAlpha = alpha;
+    ctx.textAlign = 'center';
     ctx.font = '13px "Kaiti SC", "KaiTi", serif';
     if ('letterSpacing' in ctx) { try { ctx.letterSpacing = '3px'; } catch (e) {} }
-    ctx.textAlign = 'center';
     ctx.shadowColor = 'rgba(243,217,139,.85)';
     ctx.shadowBlur = 10;
     ctx.fillStyle = '#f3d98b';
     ctx.fillText(cst.label, lp.x, lp.y + size * 0.46);
+    ctx.shadowColor = 'rgba(180,190,255,.5)';
+    ctx.shadowBlur = 6;
+    ctx.font = '10px "Kaiti SC", "KaiTi", serif';
+    ctx.fillStyle = 'rgba(196,202,242,.72)';
+    ctx.fillText(cst.subLabel, lp.x, lp.y + size * 0.46 + 16);
+    ctx.restore();
+  }
+
+  /* ---------------- 鹊桥（星质） ----------------
+     抛物线星桥：虚线轨迹 + 26 颗星体（两端大星带星芒，中央拱顶最亮） */
+
+  function drawBridge(t, alpha) {
+    const P0 = { x: W * 0.03, y: H * 0.78 };
+    const P1 = { x: W * 0.5, y: H * 0.12 };
+    const P2 = { x: W * 0.97, y: H * 0.78 };
+
+    ctx.save();
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.strokeStyle = 'rgba(217,192,106,' + (0.16 * alpha).toFixed(3) + ')';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([2, 9]);
+    ctx.beginPath();
+    ctx.moveTo(P0.x, P0.y);
+    ctx.quadraticCurveTo(P1.x, P1.y, P2.x, P2.y);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.globalCompositeOperation = 'lighter';
+    const N = 26;
+    for (let i = 0; i <= N; i++) {
+      const u = i / N;
+      const a = (1 - u) * (1 - u), b = 2 * (1 - u) * u, c = u * u;
+      const x = a * P0.x + b * P1.x + c * P2.x;
+      const y = a * P0.y + b * P1.y + c * P2.y;
+      const isEnd = (i === 0 || i === N);
+      const tw = 0.72 + 0.28 * Math.sin(t * 0.0026 + i * 1.7);
+      const halo = isEnd ? 17 : (4.5 + 6.5 * Math.sin(Math.PI * u));
+      const sprite = isEnd ? STAR_ALTAIR : STAR_SMALL[i % STAR_SMALL.length];
+      ctx.globalAlpha = alpha * (isEnd ? 1 : (0.45 + 0.4 * Math.sin(Math.PI * u)) * tw);
+      ctx.drawImage(sprite, x - halo, y - halo, halo * 2, halo * 2);
+    }
     ctx.restore();
   }
 
@@ -349,6 +412,8 @@
       ctx.globalAlpha = themeAlpha;
       if (galaxyCanvas) ctx.drawImage(galaxyCanvas, 0, 0, W, H);
       ctx.globalAlpha = 1;
+
+      drawBridge(t, themeAlpha);
 
       const small = W < 560;
       const dim = small ? 0.45 : 1;
@@ -397,6 +462,7 @@
       buildGalaxy();
       ctx.globalAlpha = 1;
       ctx.drawImage(galaxyCanvas, 0, 0, W, H);
+      drawBridge(0, 1);
       const base = Math.min(W, H);
       const small = W < 560;
       drawConstellation(LYRA, W * (small ? 0.17 : 0.13), H * 0.62, base * (small ? 0.11 : 0.17), -0.18, 0, 1);

@@ -138,20 +138,7 @@
       '</g></svg>';
   }
 
-  /* ---------------- 七夕装饰：鹊桥 + 喜鹊（牛郎织女由 canvas 星座渲染） ---------------- */
-
-  /* 鹊桥：星点连成的弧 */
-  const BRIDGE_SVG =
-    '<svg class="qixi-bridge" viewBox="0 0 1440 300" preserveAspectRatio="none" aria-hidden="true">' +
-    '<path d="M40 280 Q720 30 1400 280" fill="none" stroke="#d9c06a" stroke-width="2.5" stroke-dasharray="1 15" stroke-linecap="round"/>' +
-    '<g fill="#ffe9a8">' +
-    '<circle cx="176" cy="235" r="2.2"/><circle cx="312" cy="200" r="2.2"/><circle cx="448" cy="175" r="2.4"/>' +
-    '<circle cx="584" cy="160" r="2.4"/><circle cx="720" cy="155" r="3"/><circle cx="856" cy="160" r="2.4"/>' +
-    '<circle cx="992" cy="175" r="2.4"/><circle cx="1128" cy="200" r="2.2"/><circle cx="1264" cy="235" r="2.2"/>' +
-    '</g>' +
-    '<circle cx="40" cy="280" r="8" fill="#f3d98b" opacity=".22"/><circle cx="40" cy="280" r="3.4" fill="#fff3d6"/>' +
-    '<circle cx="1400" cy="280" r="8" fill="#f3d98b" opacity=".22"/><circle cx="1400" cy="280" r="3.4" fill="#fff3d6"/>' +
-    '</svg>';
+  /* ---------------- 七夕装饰（鹊桥与星座由 canvas 渲染，这里只留喜鹊） ---------------- */
 
   /* 喜鹊：振翅小鸟 */
   const MAGPIE_SVG =
@@ -161,7 +148,6 @@
     '</svg>';
 
   const QIXI_DECO =
-    BRIDGE_SVG +
     '<div class="magpie-flock">' + MAGPIE_SVG + MAGPIE_SVG + MAGPIE_SVG + '</div>' +
     '<div class="magpie-flock f2">' + MAGPIE_SVG + MAGPIE_SVG + '</div>';
 

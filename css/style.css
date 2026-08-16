@@ -188,13 +188,13 @@ body.no-scroll { overflow: hidden; }
 
 /* 七夕夜里的两侧按钮 */
 body[data-theme="qixi"] .hero-arrow {
-  background: rgba(28, 18, 58, .55);
-  border-color: rgba(231, 196, 106, .4);
+  background: rgba(24, 20, 60, .6);
+  border-color: rgba(210, 216, 255, .32);
   color: #e7c46a;
 }
 body[data-theme="qixi"] .hero-arrow:hover:not(:disabled) {
-  background: rgba(40, 26, 82, .8);
-  box-shadow: 0 6px 18px rgba(4, 2, 16, .5);
+  background: rgba(34, 28, 84, .82);
+  box-shadow: 0 6px 18px rgba(3, 2, 14, .55);
 }
 
 .hero-hint {
@@ -739,13 +739,13 @@ body[data-theme="qixi"] .envelope.mini.active .env-back {
     #ecd4ab 68%, #e4c89e 84%, #dabb8c 100%);
 }
 
-/* 七夕：午夜蓝紫底 + 淡淡银河走向（细节星带由 canvas 烘焙叠加） */
+/* 七夕：深蓝紫夜空（更深的靛蓝基调，衬托星与金） + 银河走向（细节由 canvas 烘焙） */
 .theme-bg.qixi {
   background:
-    radial-gradient(ellipse 58% 42% at 20% 80%, rgba(122, 82, 204, .22), transparent 70%),
-    radial-gradient(ellipse 52% 38% at 82% 20%, rgba(92, 62, 186, .2), transparent 70%),
-    linear-gradient(102deg, transparent 44%, rgba(168, 140, 255, .08) 50%, transparent 56%),
-    linear-gradient(180deg, #171034 0%, #241549 45%, #32205e 80%, #1c1238 100%);
+    radial-gradient(ellipse 58% 42% at 20% 80%, rgba(88, 92, 216, .2), transparent 70%),
+    radial-gradient(ellipse 52% 38% at 82% 20%, rgba(76, 74, 196, .18), transparent 70%),
+    linear-gradient(102deg, transparent 43%, rgba(150, 150, 255, .13) 50%, transparent 57%),
+    linear-gradient(180deg, #0c0a22 0%, #191140 42%, #251b58 76%, #130f30 100%);
 }
 
 /* ---------- 七夕：页面文字与组件换装（作用域限定在 .page，读信浮层面板保持奶油纸） ---------- */
@@ -763,30 +763,30 @@ body[data-theme="qixi"] .love-counter {
 
 body[data-theme="qixi"] .env-back {
   background:
-    linear-gradient(168deg, rgba(214, 196, 255, .22) 0%, rgba(214, 196, 255, 0) 24%),
-    linear-gradient(160deg, #4d3880 0%, #43306e 42%, #342460 80%, #2a1c4d 100%),
+    linear-gradient(168deg, rgba(206, 210, 255, .22) 0%, rgba(206, 210, 255, 0) 24%),
+    linear-gradient(160deg, #443a8f 0%, #372e72 42%, #292157 80%, #1e1944 100%),
     var(--tex-fiber);
   background-blend-mode: normal, normal, overlay;
   box-shadow:
-    inset 0 1px 0 rgba(230, 218, 255, .28),
-    inset 0 -3px 8px rgba(10, 5, 30, .5),
-    0 16px 34px rgba(8, 4, 26, .62),
-    0 4px 10px rgba(8, 4, 26, .4);
+    inset 0 1px 0 rgba(222, 226, 255, .26),
+    inset 0 -3px 8px rgba(6, 4, 22, .55),
+    0 16px 34px rgba(5, 3, 20, .65),
+    0 4px 10px rgba(5, 3, 20, .42);
 }
 body[data-theme="qixi"] .env-pocket {
   background:
-    linear-gradient(168deg, #5a4094 0%, #4d3880 30%, #43306e 54%, #372660 86%, #2c1e4d 100%),
+    linear-gradient(168deg, #51459e 0%, #443a8f 30%, #372e72 54%, #2a2358 86%, #201b46 100%),
     var(--tex-fiber);
   background-blend-mode: normal, overlay;
 }
 body[data-theme="qixi"] .env-pocket::before,
 body[data-theme="qixi"] .env-pocket::after {
-  background: linear-gradient(90deg, rgba(226, 214, 255, .5), rgba(226, 214, 255, .12) 55%, transparent);
+  background: linear-gradient(90deg, rgba(220, 224, 255, .5), rgba(220, 224, 255, .12) 55%, transparent);
 }
 body[data-theme="qixi"] .env-flap {
   background:
-    linear-gradient(180deg, rgba(214, 196, 255, .28) 0%, rgba(214, 196, 255, 0) 10%),
-    linear-gradient(180deg, #3a2a66 0%, #43306e 55%, #31215a 86%, #241842 100%),
+    linear-gradient(180deg, rgba(206, 210, 255, .28) 0%, rgba(206, 210, 255, 0) 10%),
+    linear-gradient(180deg, #2d255e 0%, #372e72 55%, #27204f 86%, #1b1740 100%),
     var(--tex-fiber);
   background-blend-mode: normal, normal, overlay;
 }
@@ -808,30 +808,30 @@ body[data-theme="qixi"] .seal-wax {
 body[data-theme="qixi"] .seal-wax::after { border-color: rgba(143, 106, 28, .5); }
 body[data-theme="qixi"] .env-seal::after { border-color: rgba(243, 217, 139, .85); }
 
-body[data-theme="qixi"] .env-postmark { color: #baa7f5; }
+body[data-theme="qixi"] .env-postmark { color: #a9b6f7; }
 
-/* 木质托盘 → 紫檀木（纹理随行） */
+/* 木质托盘 → 深靛紫檀（纹理随行） */
 body[data-theme="qixi"] .shelf-tray {
   background:
     var(--tex-wood),
-    repeating-linear-gradient(92deg, rgba(20, 10, 45, .16) 0 2px, transparent 2px 11px),
-    linear-gradient(180deg, #664593 0%, #4a2f70 40%, #432a66 60%, #341f4e 100%);
+    repeating-linear-gradient(92deg, rgba(12, 8, 36, .18) 0 2px, transparent 2px 11px),
+    linear-gradient(180deg, #58489b 0%, #3e3379 40%, #332a63 60%, #241d4c 100%);
   background-blend-mode: overlay, normal, normal;
   box-shadow:
-    inset 0 2px 5px rgba(226, 214, 255, .22),
-    inset 0 -10px 18px rgba(10, 4, 28, .58),
-    0 14px 30px rgba(8, 4, 26, .52);
+    inset 0 2px 5px rgba(216, 220, 255, .2),
+    inset 0 -10px 18px rgba(6, 4, 22, .6),
+    0 14px 30px rgba(5, 3, 20, .55);
 }
 body[data-theme="qixi"] .scroll-hint .chev { color: #e7c46a; }
 
 body[data-theme="qixi"] .vignette {
   background:
-    radial-gradient(ellipse 120% 90% at 50% 18%, rgba(150, 120, 255, .12) 0%, transparent 55%),
-    radial-gradient(ellipse 140% 110% at 50% 108%, rgba(4, 2, 14, .55) 0%, transparent 62%);
+    radial-gradient(ellipse 120% 90% at 50% 18%, rgba(130, 130, 255, .12) 0%, transparent 55%),
+    radial-gradient(ellipse 140% 110% at 50% 108%, rgba(2, 1, 10, .6) 0%, transparent 62%);
 }
 
 /* 读信浮层：面板保持奶油信纸，遮罩换成夜色 */
-body[data-theme="qixi"] .reading-backdrop { background: rgba(14, 8, 34, .66); }
+body[data-theme="qixi"] .reading-backdrop { background: rgba(8, 6, 26, .68); }
 body[data-theme="qixi"] .reading-panel {
   box-shadow: 0 30px 80px rgba(4, 2, 16, .75);
 }
@@ -848,14 +848,7 @@ body[data-theme="qixi"] .page-wrap::after { background: rgba(216, 190, 240, .75)
 }
 body[data-theme="qixi"] .qixi-deco { opacity: 1; }
 
-/* 鹊桥：星点弧线（牛郎织女星座由 canvas 渲染） */
-.qixi-bridge {
-  position: absolute; left: 0; right: 0; top: 3vh;
-  width: 100%; height: auto;
-  opacity: .55;
-}
-
-/* 喜鹊小队：周期性飞过银河 */
+/* 喜鹊小队：周期性飞过银河（鹊桥与星座由 canvas 渲染） */
 .magpie-flock {
   position: absolute; top: 15%; left: -160px;
   animation: flyAcross 17s linear infinite;
@@ -887,9 +880,8 @@ body[data-theme="qixi"] .qixi-deco { opacity: 1; }
 }
 
 @media (max-width: 860px) {
-  .qixi-bridge { opacity: .3; }
+  .magpie-flock.f2 { display: none; }
 }
 @media (max-width: 560px) {
-  .qixi-bridge { display: none; }
   .magpie-flock { top: 9%; }
 }
