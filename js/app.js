@@ -418,6 +418,14 @@
     scrollEl.scrollTo({ left: Math.max(0, target), behavior: 'smooth' });
   }
 
+  /* 预加载：选中或拆信时，趁换装/拆信动画的间隙把信纸先拉下来 */
+  function prefetchPages(letter) {
+    ((letter && letter.pages) || []).forEach(function (p) {
+      const im = new Image();
+      im.src = fresh(p);
+    });
+  }
+
   /* 换信 = 换主屏信封 + 换整站皮肤 + 预览栏跟随 */
   function selectLetter(idx) {
     const n = letters.length;
@@ -427,6 +435,7 @@
     setTheme(letters[selectedIdx].theme);
     updateShelfActive();
     centerSelected();
+    prefetchPages(letters[selectedIdx]);
   }
 
   if (!letters.length) {
@@ -494,6 +503,7 @@
   function openLetter(idx, btn) {
     if (currentEnv && currentEnv.busy) return;   // 上一封还没合上
     lastFocus = btn;
+    prefetchPages(letters[idx]);                 // 拆信动画 ~2.2s，趁机下载信纸
     currentEnv = new Envelope(btn);
     currentEnv.open(function () { showReading(idx, true); });
   }
