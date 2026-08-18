@@ -46,8 +46,9 @@ window.MAILBOX = {
       excerpt: "一封穿着星河的信，等你拆开。",
       theme: "qixi",          // ★ 七夕星河皮肤：切到这封信时整站换装
       pages: [
-        "letters/demo/page-1.svg",   // ★ 明天换成手写扫描件（可多页）
-        "letters/demo/page-2.svg"
+        "letters/8.18/1.jpg",
+        "letters/8.18/2.jpg",
+        "letters/8.18/3.jpg"
       ]
     }
   ]
