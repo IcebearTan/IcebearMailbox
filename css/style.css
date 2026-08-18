@@ -845,32 +845,6 @@ body[data-theme="qixi"] .hero-arrow:hover:not(:disabled) {
   letter-spacing: .1em;
 }
 
-.reading-nav {
-  display: flex; align-items: center; justify-content: center; gap: 18px;
-  padding-top: 14px;
-  border-top: 1px dashed rgba(169, 110, 60, .35);
-  margin-top: 6px;
-}
-.nav-btn {
-  font: inherit; font-size: 14px;
-  letter-spacing: .08em;
-  color: var(--ink);
-  padding: 8px 20px;
-  border-radius: 999px;
-  border: 1px solid rgba(150, 105, 60, .45);
-  background: rgba(255, 248, 232, .7);
-  cursor: pointer;
-  transition: background .25s, transform .25s;
-}
-.nav-btn:hover:not(:disabled) { background: #fff; transform: translateY(-1px); }
-.nav-btn:disabled { opacity: .35; cursor: default; }
-.nav-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
-.nav-count {
-  font-size: 13px; letter-spacing: .2em;
-  color: var(--ink-soft);
-  min-width: 4.5em; text-align: center;
-}
-
 /* ---------------- 响应式 ---------------- */
 
 @media (max-width: 640px) {

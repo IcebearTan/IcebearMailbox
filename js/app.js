@@ -195,9 +195,6 @@
   const readingDate = $('#readingDate');
   const readingPages = $('#readingPages');
   const readingClose = $('#readingClose');
-  const navPrev = $('#navPrev');
-  const navNext = $('#navNext');
-  const navCount = $('#navCount');
   const bgA = $('#bgA');
   const bgB = $('#bgB');
   const qixiDeco = $('#qixiDeco');
@@ -523,10 +520,6 @@
       readingPages.innerHTML = '<p class="pages-empty">这一封还没有放进信纸哦</p>';
     }
 
-    navPrev.disabled = idx <= 0;
-    navNext.disabled = idx >= letters.length - 1;
-    navCount.textContent = letters.length > 1 ? (idx + 1) + ' / ' + letters.length : '';
-
     layer.hidden = false;
     /* 双 rAF：确保 [hidden] 移除后过渡能触发 */
     requestAnimationFrame(function () {
@@ -580,14 +573,4 @@
     if (e.key === 'ArrowLeft') selectLetter(selectedIdx - 1);
     else if (e.key === 'ArrowRight') selectLetter(selectedIdx + 1);
   });
-
-  /* 浮层内直接翻信（不重演拆信动画） */
-  function switchLetter(delta) {
-    const next = currentIdx + delta;
-    if (next < 0 || next >= letters.length) return;
-    showReading(next, true);
-    readingPages.scrollTop = 0;
-  }
-  navPrev.addEventListener('click', function () { switchLetter(-1); });
-  navNext.addEventListener('click', function () { switchLetter(1); });
 })();
